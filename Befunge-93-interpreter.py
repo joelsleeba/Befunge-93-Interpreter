@@ -8,11 +8,7 @@ def makecodearray(code):
         codearray[codearray.index(i)] = x
     return codearray
 
-
-output = ''
-
-
-def interpretor(codearray, mov, pos=[0, 0]):
+def interpreter(codearray, mov, pos=[0, 0]):
     testvalue = codearray[pos[0]][pos[1]]
     if mov == '>':
         pos_new = [pos[0], pos[1]+1]
@@ -25,19 +21,19 @@ def interpretor(codearray, mov, pos=[0, 0]):
     #print(pos, pos_new, output)
 
     if testvalue == '>':
-        return interpretor(codearray, '>', [pos[0], pos[1]+1])
+        return interpreter(codearray, '>', [pos[0], pos[1]+1])
     elif testvalue == '<':
-        return interpretor(codearray, '<', [pos[0], pos[1]-1])
+        return interpreter(codearray, '<', [pos[0], pos[1]-1])
     elif testvalue == '^':
-        return interpretor(codearray, '^', [pos[0]-1, pos[1]])
+        return interpreter(codearray, '^', [pos[0]-1, pos[1]])
     elif testvalue == 'v':
-        return interpretor(codearray, 'v', [pos[0]+1, pos[1]])
+        return interpreter(codearray, 'v', [pos[0]+1, pos[1]])
     elif testvalue == '@':
         return ''
     elif testvalue.isalnum():
-        return testvalue+interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+        return testvalue+interpreter(codearray, mov, [pos_new[0], pos_new[1]])
     else:
-        return interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+        return interpreter(codearray, mov, [pos_new[0], pos_new[1]])
 
 
 def interpret(code):
@@ -45,7 +41,7 @@ def interpret(code):
     for i in codelist:
         print(i, end='\n')
     mov = codelist[0][0]
-    print(interpretor(codelist, mov))
+    print(interpreter(codelist, mov))
 
 
 interpret('>987v> v\nv456<   \n>321 ^ @')
