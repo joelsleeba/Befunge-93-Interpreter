@@ -9,11 +9,14 @@ def makecodearray(code):
     return codearray
 
 
-output = ''
+outputarray = []
+output=''
 
 
 def interpretor(codearray, mov, pos=[0, 0]):
-    global output
+    global output,outputarray
+    if pos == [0,0]:
+        output,outputarray = '',[]
     testvalue = codearray[pos[0]][pos[1]]
     if mov == '>':
         pos_new = [pos[0], pos[1]+1]
@@ -35,11 +38,34 @@ def interpretor(codearray, mov, pos=[0, 0]):
         interpretor(codearray, 'v', [pos[0]+1, pos[1]])
     elif testvalue == '@':
         pass
-    elif testvalue.isalnum():
-        output = testvalue + output
+    elif testvalue.isalpha():
+        outputarray.append(testvalue)
         interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+    elif testvalue == '.':
+        for i in range(len(outputarray)):
+            output += outputarray.pop()
+        interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+    elif testvalue == ':':
+        if outputarray == []:
+            outputarray.append('0')
+        else:
+            outputarray.append(outputarray[-1])
+        interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+    elif testvalue == '|':
+        value = outputarray.pop()
+        if value == '0':
+            interpretor(codearray, 'v', [pos[0]+1, pos[1]])
+        else:
+            interpretor(codearray, '^', [pos[0]-1, pos[1]])
+    elif testvalue == '_':
+        value = outputarray.pop()
+        if value == '0':
+            interpretor(codearray, '>', [pos[0], pos[1]+1])
+        else:
+            interpretor(codearray, '<', [pos[0], pos[1]-1])
     else:
         interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+    
 
     return output
 
@@ -52,4 +78,5 @@ def interpret(code):
     print(interpretor(codelist, mov))
 
 
-interpret('>987v> v\nv456<   \n>321 ^ @')
+interpret('>987v>.v\nv456<  :\n>321 ^ _@')
+interpret('>              v\nv  ,,,,,"Hello"<\n>48*.          v\nv,,,,,,"World!"<\n>25*.@')
