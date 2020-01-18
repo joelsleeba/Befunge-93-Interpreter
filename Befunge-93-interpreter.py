@@ -36,7 +36,7 @@ def interpretor(codearray, mov, pos=[0, 0]):
     elif testvalue == '@':
         pass
     elif testvalue.isalnum():
-        output += testvalue
+        output = testvalue + output
         interpretor(codearray, mov, [pos_new[0], pos_new[1]])
     else:
         interpretor(codearray, mov, [pos_new[0], pos_new[1]])
