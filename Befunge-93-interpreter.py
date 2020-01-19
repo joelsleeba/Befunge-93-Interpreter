@@ -1,4 +1,8 @@
 # https://www.codewars.com/kata/526c7b931666d07889000a3c/train/python
+import sys
+sys.setrecursionlimit(4000)
+
+
 def makecodearray(code):
     codearray = code.split('\n')
     for i in codearray:
@@ -52,12 +56,18 @@ def interpretor(codearray, mov, pos=[0, 0], mode='normal', skip='no'):
                 pass
             elif testvalue == '+':
                 a = int(outputarray.pop())
-                b = int(outputarray.pop())
+                if outputarray == []:
+                    b = 0
+                else:
+                    b = int(outputarray.pop())
                 outputarray.append(str(a+b))
                 interpretor(codearray, mov, [pos_new[0], pos_new[1]])
             elif testvalue == '-':
                 a = int(outputarray.pop())
-                b = int(outputarray.pop())
+                if outputarray == []:
+                    b = 0
+                else:
+                    b = int(outputarray.pop())
                 outputarray.append(str(b-a))
                 interpretor(codearray, mov, [pos_new[0], pos_new[1]])
             elif testvalue == '*':
@@ -102,11 +112,12 @@ def interpretor(codearray, mov, pos=[0, 0], mode='normal', skip='no'):
                         output += outputarray.pop()
                 interpretor(codearray, mov, [pos_new[0], pos_new[1]])
             elif testvalue == ',':
-                for i in range(len(outputarray)-1, -1, -1):
-                    if outputarray[i].isnumeric():
-                        output += chr(int(outputarray.pop()))
-                    else:
-                        output += outputarray.pop()
+                # for i in range(len(outputarray)-1, -1, -1):
+                temp = outputarray.pop()
+                if temp.isnumeric():
+                    output += chr(int(temp))
+                else:
+                    output += temp
                 interpretor(codearray, mov, [pos_new[0], pos_new[1]])
             elif testvalue == ':':
                 if outputarray == []:
@@ -141,6 +152,32 @@ def interpretor(codearray, mov, pos=[0, 0], mode='normal', skip='no'):
             elif testvalue == '#':
                 interpretor(codearray, mov, [
                             pos_new[0], pos_new[1]], mode, 'skip')
+            elif testvalue == 'p':
+                y = outputarray.pop()
+                x = outputarray.pop()
+                v = outputarray.pop()
+                if y.isnumeric() and x.isnumeric():
+                    y = int(y)
+                    x = int(x)
+                    if v.isnumeric():
+                        v = int(v)
+                        codearray[x][y] = chr(v)
+                    else:
+                        codearray[x][y] = ord(v)
+                else:
+                    print("The given co-ordinates for the array is invalid")
+                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+            elif testvalue == 'g':
+                y = outputarray.pop()
+                x = outputarray.pop()
+                if x.isnumeric() and y.isnumeric():
+                    x = int(x)
+                    y = int(y)
+                    temp = str(codearray[y][x])
+                    outputarray.append(str(ord(temp)))
+                else:
+                    print("The given co-ordinates for the array is invalid")
+                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
             elif testvalue.isalnum():
                 outputarray.append(testvalue)
                 interpretor(codearray, mov, [pos_new[0], pos_new[1]])
@@ -166,5 +203,6 @@ def interpret(code):
 
 
 interpret('>987v>.v\nv456<  :\n>321 ^ _@')
-interpret('>              v\nv  ,,,,,"Hello"<\n>48*,          v\nv,,,,,,"World!"<\n>25*,@')
-interpret('08>:1-:v v *_$.@ \n  ^    _$>\:^')
+interpret(    '>              v\nv  ,,,,,"Hello"<\n>48*,          v\nv,,,,,,"World!"<\n>25*,@')
+interpret('08>:1-:v v *_$.@ \n  ^    _$>\:^')# output and input are same
+interpret('01->1# +# :# 0# g# ,# :# 5# 8# *# 4# +# -# _@')
