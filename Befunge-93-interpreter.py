@@ -1,8 +1,4 @@
 # https://www.codewars.com/kata/526c7b931666d07889000a3c/train/python
-import sys
-sys.setrecursionlimit(4000)
-
-
 def makecodearray(code):
     codearray = code.split('\n')
     for i in codearray:
@@ -12,181 +8,172 @@ def makecodearray(code):
         codearray[codearray.index(i)] = x
     return codearray
 
+def interpretor(codelist):
+    import random
+    fwd = True
+    pos = [0,0]
+    mov = '>'
+    mode = 'normal'
+    outputlist = []
+    output = ''
+    skip = False
 
-outputarray = []
-output = ''
-string = ''
-pos_new = []
+    while fwd:
+        if skip:
+            skip = False
+            if mov == '>':
+                pos = [pos[0], pos[1]+1]
+            elif mov == '<':
+                pos = [pos[0], pos[1]-1]
+            elif mov == '^':
+                pos = [pos[0]-1, pos[1]]
+            elif mov == 'v':
+                pos = [pos[0]+1, pos[1]]
+            continue
+        else:
+            pass
 
+        testvalue = codelist[pos[0]][pos[1]]
+        print(outputlist,pos)
 
-def interpretor(codearray, mov, pos=[0, 0], mode='normal', skip='no'):
-    global output, outputarray, string, pos_new
-    #print(outputarray, pos)
-    if pos == [0, 0]:
-        output, outputarray, string, pos_new = '', [], '', []
-    testvalue = codearray[pos[0]][pos[1]]
-
-    if mov == '>':
-        pos_new = [pos[0], pos[1]+1]
-    elif mov == '<':
-        pos_new = [pos[0], pos[1]-1]
-    elif mov == '^':
-        pos_new = [pos[0]-1, pos[1]]
-    elif mov == 'v':
-        pos_new = [pos[0]+1, pos[1]]
-    #print(pos, pos_new, output)
-
-    if skip == 'no':
         if mode == 'string':
             if testvalue == '"':
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            else:
-                outputarray.append(testvalue)
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]], 'string')
-        else:
-            if testvalue == '>':
-                interpretor(codearray, '>', [pos[0], pos[1]+1])
-            elif testvalue == '<':
-                interpretor(codearray, '<', [pos[0], pos[1]-1])
-            elif testvalue == '^':
-                interpretor(codearray, '^', [pos[0]-1, pos[1]])
-            elif testvalue == 'v':
-                interpretor(codearray, 'v', [pos[0]+1, pos[1]])
-            elif testvalue == '@':
+                mode = 'normal'
+            elif testvalue == ' ':
                 pass
-            elif testvalue == '+':
-                a = int(outputarray.pop())
-                if outputarray == []:
-                    b = 0
-                else:
-                    b = int(outputarray.pop())
-                outputarray.append(str(a+b))
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '-':
-                a = int(outputarray.pop())
-                if outputarray == []:
-                    b = 0
-                else:
-                    b = int(outputarray.pop())
-                outputarray.append(str(b-a))
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '*':
-                a = int(outputarray.pop())
-                b = int(outputarray.pop())
-                outputarray.append(str(a*b))
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '/':
-                a = int(outputarray.pop())
-                b = int(outputarray.pop())
-                if a == 0:
-                    outputarray.append(0)
-                else:
-                    outputarray.append(str(b//a))
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '%':
-                a = int(outputarray.pop())
-                b = int(outputarray.pop())
-                if a == 0:
-                    outputarray.append('0')
-                else:
-                    outputarray.append(str(b % a))
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '!':
-                a = int(outputarray.pop())
-                if a == 0:
-                    outputarray.append('1')
-                else:
-                    outputarray.append('0')
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '`':
-                a = int(outputarray.pop())
-                b = int(outputarray.pop())
-                if b > a:
-                    outputarray.append('1')
-                else:
-                    outputarray.append('0')
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '.':
-                for i in range(len(outputarray)-1, -1, -1):
-                    if outputarray[i].isnumeric():
-                        output += outputarray.pop()
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == ',':
-                # for i in range(len(outputarray)-1, -1, -1):
-                temp = outputarray.pop()
-                if temp.isnumeric():
-                    output += chr(int(temp))
-                else:
-                    output += temp
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == ':':
-                if outputarray == []:
-                    outputarray.append('0')
-                else:
-                    outputarray.append(outputarray[-1])
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '|':
-                value = outputarray.pop()
-                if value == '0':
-                    interpretor(codearray, 'v', [pos[0]+1, pos[1]])
-                else:
-                    interpretor(codearray, '^', [pos[0]-1, pos[1]])
-            elif testvalue == '_':
-                value = outputarray.pop()
-                if value == '0':
-                    interpretor(codearray, '>', [pos[0], pos[1]+1])
-                else:
-                    interpretor(codearray, '<', [pos[0], pos[1]-1])
-            elif testvalue == '\\':
-                a = outputarray.pop()
-                if outputarray == []:
-                    b = 0
-                else:
-                    b = outputarray.pop()
-                outputarray.append(a)
-                outputarray.append(b)
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '$':
-                outputarray.pop()
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '#':
-                interpretor(codearray, mov, [
-                            pos_new[0], pos_new[1]], mode, 'skip')
-            elif testvalue == 'p':
-                y = outputarray.pop()
-                x = outputarray.pop()
-                v = outputarray.pop()
-                if y.isnumeric() and x.isnumeric():
-                    y = int(y)
-                    x = int(x)
-                    if v.isnumeric():
-                        v = int(v)
-                        codearray[x][y] = chr(v)
-                    else:
-                        codearray[x][y] = ord(v)
-                else:
-                    print("The given co-ordinates for the array is invalid")
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == 'g':
-                y = outputarray.pop()
-                x = outputarray.pop()
-                if x.isnumeric() and y.isnumeric():
-                    x = int(x)
-                    y = int(y)
-                    temp = str(codearray[y][x])
-                    outputarray.append(str(ord(temp)))
-                else:
-                    print("The given co-ordinates for the array is invalid")
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue.isalnum():
-                outputarray.append(testvalue)
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-            elif testvalue == '"':
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]], 'string')
             else:
-                interpretor(codearray, mov, [pos_new[0], pos_new[1]])
-    else:
-        interpretor(codearray, mov, [pos_new[0], pos_new[1]])
+                outputlist.append(testvalue)
+        else:
+            if testvalue == '@':
+                fwd = False
+            elif testvalue == '>':
+                mov = '>'
+            elif testvalue == '<':
+                mov = '<'
+            elif testvalue == '^':
+                mov = '^'
+            elif testvalue == 'v':
+                mov = 'v'
+            elif testvalue == '"':
+                mode = 'string'
+            elif testvalue == '#':
+                skip = True
+            elif testvalue == '+':
+                a = int(outputlist.pop())
+                if outputlist == []:
+                    b = 0
+                else:
+                    b = int(outputlist.pop())
+                outputlist.append(str(a+b))
+            elif testvalue == '-':
+                a = outputlist.pop()
+                if not a.isnumeric():
+                    outputlist.append(a)
+                else:
+                    if not outputlist == []:
+                        b = outputlist.pop()
+                        if not b.isnumeric():
+                            outputlist.append(b)
+                    else:
+                        b = '0'
+                    outputlist.append(str(int(b)-int(a)))
+            elif testvalue == '*':
+                a = int(outputlist.pop())
+                b = int(outputlist.pop())
+                outputlist.append(str(b*a))
+            elif testvalue == '/':
+                a = int(outputlist.pop())
+                b = int(outputlist.pop())
+                if a == 0:
+                    outputlist.append(0)
+                else:
+                    outputlist.append(str(b//a))
+            elif testvalue == '%':
+                a = int(outputlist.pop())
+                b = int(outputlist.pop())
+                if a == 0:
+                    outputlist.append('0')
+                else:
+                    outputlist.append(str(b % a))
+            elif testvalue == '!':
+                a = outputlist.pop()
+                if a == '0':
+                    outputlist.append('1')
+                else:
+                    outputlist.append('0')
+            elif testvalue == '`':
+                a = outputlist.pop()
+                b = outputlist.pop()
+                if not a.isnumeric():
+                    a = ord(a)
+                if not b.isnumeric():
+                    b = ord(b)
+                if int(b) > int(a):
+                    outputlist.append('1')
+                else:
+                    outputlist.append('0')
+            elif testvalue == '_':
+                a = outputlist.pop()
+                if a == '0':
+                    mov = '>'
+                else:
+                    mov = '<'
+            elif testvalue == '|':
+                a = outputlist.pop()
+                if a == '0':
+                    mov = 'v'
+                else:
+                    mov = '^'
+            elif testvalue == ':':
+                if outputlist == []:
+                    outputlist.append('0')
+                else:
+                    outputlist.append(outputlist[-1])
+            elif testvalue == '\\':
+                a = outputlist.pop()
+                if outputlist == []:
+                    b = '0'
+                else:
+                    b = outputlist.pop()
+                outputlist.append(a)
+                outputlist.append(b)
+            elif testvalue == '$':
+                outputlist.pop()
+            elif testvalue == '.':
+                a = outputlist.pop()
+                if a.isnumeric():
+                    output += a
+            elif testvalue == ',':
+                if not outputlist == []:
+                    a = outputlist.pop()
+                    if a.isnumeric():
+                        output += chr(int(a))
+                    else:
+                        output += a
+                else:
+                    pass
+            elif testvalue == 'p':
+                y = int(outputlist.pop())
+                x = int(outputlist.pop())
+                codelist[x][y] = chr(int(outputlist.pop()))
+            elif testvalue == 'g':
+                y = int(outputlist.pop())
+                x = int(outputlist.pop())
+                temp = codelist[y][x]
+                outputlist.append(str(ord(temp)))
+            elif testvalue =='?':
+                mov = random.choice(['>', '<', '^', 'v'])
+            elif testvalue.isalnum():
+                outputlist.append(testvalue)
+        
+        if mov == '>':
+            pos = [pos[0], pos[1]+1]
+        elif mov == '<':
+            pos = [pos[0], pos[1]-1]
+        elif mov == '^':
+            pos = [pos[0]-1, pos[1]]
+        elif mov == 'v':
+            pos = [pos[0]+1, pos[1]]
 
     return output
 
@@ -195,14 +182,11 @@ def interpret(code):
     codelist = makecodearray(code)
     for i in codelist:
         print(i, end='\n')
-    if codelist[0][0] in ['<', '>', '^', 'v']:
-        mov = codelist[0][0]
-    else:
-        mov = '>'
-    print(interpretor(codelist, mov))
+    print(interpretor(codelist))
 
 
 interpret('>987v>.v\nv456<  :\n>321 ^ _@')
 interpret(    '>              v\nv  ,,,,,"Hello"<\n>48*,          v\nv,,,,,,"World!"<\n>25*,@')
-interpret('08>:1-:v v *_$.@ \n  ^    _$>\:^')
-interpret('01->1# +# :# 0# g# ,# :# 5# 8# *# 4# +# -# _@')# output and input are same
+interpret('08>:1-:v v *_$.@ \n  ^    _$>\:^')# output and input are same
+interpret('01->1# +# :# 0# g# ,# :# 5# 8# *# 4# +# -# _@')
+interpret('v@.<\n >1^\n>?<^\n >2^')
