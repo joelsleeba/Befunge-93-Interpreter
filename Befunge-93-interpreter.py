@@ -204,5 +204,5 @@ def interpret(code):
 
 interpret('>987v>.v\nv456<  :\n>321 ^ _@')
 interpret(    '>              v\nv  ,,,,,"Hello"<\n>48*,          v\nv,,,,,,"World!"<\n>25*,@')
-interpret('08>:1-:v v *_$.@ \n  ^    _$>\:^')# output and input are same
-interpret('01->1# +# :# 0# g# ,# :# 5# 8# *# 4# +# -# _@')
+interpret('08>:1-:v v *_$.@ \n  ^    _$>\:^')
+interpret('01->1# +# :# 0# g# ,# :# 5# 8# *# 4# +# -# _@')# output and input are same
